@@ -21,7 +21,7 @@ barplot(US15$`PersonsPoverty%`, names = US15$Cities,
 
 ### Box plots
 
-#number of people living under the poverty threshold and 
+#number of people living under the poverty threshold
 boxplot(US15$`2018`, US15$Proportion, col = "orange", log10 = "x", log10 = "y")
 
 #percentage of poverty
