@@ -1,0 +1,116 @@
+---
+title: ""
+author: ""
+output:
+  rmarkdown::html_document:
+    theme: lumen
+
+---
+\
+\
+
+<img src="iconmalmo.png" alt="" width="350" height="180">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=9, fig.height=4.5, fig.align = "center")
+
+library(curl)
+library(rsconnect)
+library(markdown)
+library(rmarkdown)
+library(htmltools)
+library(mime)
+library(knitr)
+library(rsconnect)
+library(prettydoc)
+library(readxl)
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(plotly)
+library(DT)
+library(sf)
+library(rgdal)
+library(maps)
+library(tmap)
+library(mapdata)
+library(mapproj)
+library(shiny)
+library(dplyr)
+library(readxl)
+library(tidyverse)
+library(transformr)
+library(geojson)
+library(raster) # union function
+library(bookdown)
+library(xfun)
+
+## Total Deaths per Region
+
+articles <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "articles")
+
+articles <- as.data.frame(articles)
+
+options(digits = 0)
+books <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "books_chapters")
+
+books <- as.data.frame(books)
+
+publications <- merge(articles, books, by = "Cities")
+
+names(publications)[1] <- "NAME_1"
+
+
+sweden <- readOGR("/Users/wemigliari/Documents/R/data/SWE_adm1.shp")
+class(sweden)
+
+sweden1 <- read_sf("/Users/wemigliari/Documents/R/data/SWE_adm1.shp")
+class(sweden1)
+
+sweden_test <- merge(publications, sweden1, by = "NAME_1") ## It works!
+class(sweden_test)
+
+sweden_test1 <- st_as_sf(sweden_test) ## It works!
+class(sweden_test1)
+
+### Labels
+
+regions <- paste(sep = "  ",
+                 sweden_test$NAME_1,
+                 "2020 - Articles:",
+                 sweden_test$`2020.x`,
+                 "|",
+                 "2020 - Book Chapters:",
+                 sweden_test$`2020.y`)
+
+
+institute <- paste(sep ="<br>", 
+            "<b><a href='https://mau.se/en/research/projects/smart-cities-for-city-officials/'>Institute for Urban Research</a><b>",
+            "<b><a href='https://rpubs.com/wemigliari/648308'>Metadata</a><b>",
+                   "Smart cities for city officials"
+            )
+```
+#### Smart cities for city officials
+\
+For metadata on smart cities topics, <a href="https://rpubs.com/wemigliari/648308" target="_blank"> click here.</a>
+\
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+library(RColorBrewer)
+
+leaflet(sweden_test$geometry)%>% 
+  addPolygons(fillColor = "red", color = "gray",
+              opacity = 0.5,
+              weight = .6, smoothFactor = 0.2, label = regions,
+              highlightOptions = highlightOptions(color="white", weight=2, bringToFront = TRUE))%>%
+  addProviderTiles(providers$CartoDB.Voyager)%>%
+  addCircles(lat=59.334591, lng=18.063240, color = "red", label = "Stockholm", radius = 300)
+  #addMarkers(lat=55.60587, lng=13.00073, popup = institute
+            #)
+
+
+```
+<a href="https://mau.se/en/research/research-programmes/institute-for-urban-research/" target="_blank"> Institute for Urban Research, University of Malmö</a>
+
+\
+\
