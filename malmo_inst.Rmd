@@ -1,0 +1,234 @@
+---
+title: ""
+author: ""
+output:
+  rmarkdown::html_document:
+    theme: lumen
+bibliography: testcf.bib
+
+---
+\
+\
+
+<img src="iconmalmo.png" alt="" width="350" height="180">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=9, fig.height=4.5, fig.align = "center")
+
+library(readxl)
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(plotly)
+library(DT)
+
+library(maps)
+library(mapdata)
+library(mapproj)
+
+
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, comment = FALSE, message = FALSE, include=FALSE}
+
+options(digits = 0)
+
+articles <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx")
+
+articles <- as.data.frame(articles)
+articles[,3] <- sapply(articles[,3], as.numeric)
+articles %>%
+    group_by(cities) %>% 
+    mutate(Years=as.Date(Years, format = "%d.%m.%Y"))
+
+
+```
+
+## Metadata on Smart City Research
+#### Quantitative Review of Smart City Research in Northern Europe [This is not an official webpage! Please, do not use it!]
+
+\
+
+## {.tabset}
+
+### Published Articles
+\
+```{r, echo = FALSE, warning=FALSE, comment=FALSE, message=FALSE}
+
+
+library(RColorBrewer)
+
+set.seed(50)
+
+
+plot_ly(articles, x = ~`Years`, y = ~`Total`, type = 'bar', mode = 'markers', marker = list(size = ~Total, opacity = 0.5), 
+        name = articles$cities,
+        text = articles$cities,
+        color = articles$Total,
+        colors = colorRampPalette(brewer.pal(10,"Reds"))(21))%>%
+  layout(title = 'Smart City Studies, Articles Published in Sweden, 2010-2020',
+         xaxis = list(title = "", gridcolor = 'rgb(255, 255, 255)', range = c(min("2010"),max("2021"))),
+         yaxis = list(title = "Articles", gridcolor = 'rgb(255, 255, 255)'),
+         showlegend = FALSE)
+
+```
+
+\
+**This excerpt was retrieved from the official webpage of the Institute for Urban Research, Malmö University.** For more details,<a href="https://mau.se/en/research/research-programmes/institute-for-urban-research/" target="_blank"> click here.</a> The figures were forged by us just to run the prototype in R with metadata interfaces. The model will be ameliorated under the supervision of the IUR with real inputs extracted from publishers pages and prepared in Excel tables.
+
+\
+\
+
+### Book Chapters
+\
+```{r, echo = FALSE, warning=FALSE, comment=FALSE, message=FALSE}
+
+library(RColorBrewer)
+
+plot_ly(articles, x = articles$Years, y = articles$Total, text = articles$cities, type = 'scatter', mode = 'markers',
+        marker = list(size = ~Total/10, opacity = 0.5), 
+        color = "red",
+        colors = "red")%>%
+  layout(title = 'Smart City Studies, Book Chapters Published in Sweden, 2010-2020',
+         xaxis = list(title = "", gridcolor = 'rgb(255, 255, 255)'),
+         yaxis = list(title = "Book Chapters", gridcolor = 'rgb(255, 255, 255)'),
+         showlegend = FALSE)
+
+```
+
+\
+\
+
+### Tables
+
+```{r, echo = FALSE, message = FALSE}
+
+options(digits = 0)
+articles1 <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "articles")
+
+articles1 <- as.data.frame(articles1)
+
+datatable(articles1, filter = 'top',
+          extensions = 'Buttons',
+          callback = DT::JS("return table;"),
+          caption = 'Table 1: Articles Published in Sweden on Smart Cities Studies, 2010-2020',
+          options = list(scrollX = T,
+            columnDefs = list(list(width = '10px', targets = "_all")),
+  pageLength = 10,
+  dom = 'Bfrtip', 
+  buttons = c('copy', 'csv', 'excel')))%>%
+    formatRound(3, digits=0)%>%
+  formatStyle(columns = c(1:12), fontSize = '80%')
+
+```
+\
+\
+```{r, echo = FALSE, message = FALSE}
+
+options(digits = 0)
+articles1 <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "books_chapters")
+
+articles1 <- as.data.frame(articles1)
+
+datatable(articles1, filter = 'top',
+          extensions = 'Buttons',
+          callback = DT::JS("return table;"),
+          caption = 'Table 2: Book Chapters Published in Sweden on Smart Cities Studies, 2010-2020',
+          options = list(scrollX = T,
+            columnDefs = list(list(width = '10px', targets = "_all")),
+  pageLength = 10,
+  dom = 'Bfrtip', 
+  buttons = c('copy', 'csv', 'excel')))%>%
+    formatRound(3, digits=0)%>%
+  formatStyle(columns = c(1:12), fontSize = '80%')
+
+```
+
+\
+
+
+### Intersecting Themes
+\
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#Networks
+
+library(tidyverse)
+library(viridis)
+library(igraph)
+library(networkD3)
+
+# Load dataset from github
+data <- read_xlsx("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx",
+                   sheet = "intersecting_themes")
+
+data <- as.data.frame(data, stringsAsFactors = FALSE)
+
+##
+nodes <- data.frame(name = unique(c(data$source, data$target)))
+
+nodes$group <- as.factor(c("a","b","b","b","b","c","c","c", "c"))
+
+links <- data.frame(source = match(data$source, nodes$name) - 1,
+                    target = match(data$target, nodes$name) - 1)
+
+mycolour <- JS('d3.scaleOrdinal().domain(["a", "b", "c"]).range(["red", "black", "gray"])')
+
+
+forceNetwork(Links = links, Nodes = nodes, Source = "source",
+             Target = "target", NodeID ="name", Group = "group",
+             fontSize = 14,
+             zoom = F,
+             radiusCalculation = JS(" Math.sqrt(d.nodesize)+100"), charge = -300,
+             opacity = 1, opacityNoHover = 1, width = 1000, height = 700,
+             colourScale = mycolour,
+             linkDistance= 200)
+
+```
+
+\
+\
+
+### Courses
+\
+
+```{r, echo = FALSE, message = FALSE}
+
+options(digits = 0)
+courses <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "courses")
+
+courses <- as.data.frame(courses)
+
+datatable(courses, filter = 'top',
+          extensions = 'Buttons',
+          callback = DT::JS("return table;"),
+          caption = 'Table 1: Education at Urban Studies, Programmes and Courses',
+          options = list(scrollX = T,
+            columnDefs = list(list(width = '10px', targets = "_all")),
+  pageLength = 20,
+  dom = 'Bfrtip', 
+  buttons = c('copy', 'csv', 'excel')))%>%
+  formatStyle(columns = c(1:2), fontSize = '80%')
+
+```
+
+\
+\
+
+### References
+\
+
+
+The Institute for Urban Research has a repository on smart cities topics. The texts are available for consultation. For more details,<a href="http://mau.diva-portal.org/smash/resultList.jsf?dswid=402&language=en&searchType=SIMPLE&query=smart+cities&af=%5B%5D&aq=%5B%5B%5D%5D&aq2=%5B%5B%5D%5D&aqe=%5B%5D&noOfRows=50&sortOrder=author_sort_asc&sortOrder2=title_sort_asc&onlyFullText=false&sf=all" target="_blank"> click here.</a>
+
+
+\
+\
+
+
+
+
+
