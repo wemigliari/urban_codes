@@ -35,13 +35,16 @@ library(mapproj)
 
 options(digits = 0)
 
-articles <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx")
+articles <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "articles1")
 
-articles <- as.data.frame(articles)
-articles[,3] <- sapply(articles[,3], as.numeric)
-articles %>%
-    group_by(cities) %>% 
-    mutate(Years=as.Date(Years, format = "%d.%m.%Y"))
+#articles <- as.data.frame(articles)
+#articles[,3] <- sapply(articles[,3], as.numeric)
+#articles %>%
+    #group_by(Cities) %>% 
+    #mutate(Years=as.Date(Years, format = "%d.%m.%Y"))
+
+
+book_chapters <- read_excel("/Users/wemigliari/Documents/R/tabelas/malmo_smart_city.xlsx", sheet = "books_chapters1")
 
 
 ```
@@ -64,12 +67,12 @@ set.seed(50)
 
 
 plot_ly(articles, x = ~`Years`, y = ~`Total`, type = 'bar', mode = 'markers', marker = list(size = ~Total, opacity = 0.5), 
-        name = articles$cities,
-        text = articles$cities,
+        name = articles$Cities,
+        text = articles$Cities,
         color = articles$Total,
         colors = colorRampPalette(brewer.pal(10,"Reds"))(21))%>%
   layout(title = 'Smart City Studies, Articles Published in Sweden, 2010-2020',
-         xaxis = list(title = "", gridcolor = 'rgb(255, 255, 255)', range = c(min("2010"),max("2021"))),
+         xaxis = list(title = "", gridcolor = 'rgb(255, 255, 255)'),
          yaxis = list(title = "Articles", gridcolor = 'rgb(255, 255, 255)'),
          showlegend = FALSE)
 
@@ -87,8 +90,8 @@ plot_ly(articles, x = ~`Years`, y = ~`Total`, type = 'bar', mode = 'markers', ma
 
 library(RColorBrewer)
 
-plot_ly(articles, x = articles$Years, y = articles$Total, text = articles$cities, type = 'scatter', mode = 'markers',
-        marker = list(size = ~Total/10, opacity = 0.5), 
+plot_ly(book_chapters, x = book_chapters$Year1, y = book_chapters$Total1, text = articles$cities, type = 'scatter', mode = 'markers',
+        marker = list(size = ~Total1/10, opacity = 0.5), 
         color = "red",
         colors = "red")%>%
   layout(title = 'Smart City Studies, Book Chapters Published in Sweden, 2010-2020',
