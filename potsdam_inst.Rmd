@@ -1,0 +1,168 @@
+---
+title: ""
+author: ""
+output:
+  rmarkdown::html_document:
+    theme: lumen
+bibliography: testcf.bib
+---
+
+![](/Users/wemigliari/Documents/R/R_Scripts/Rmarkdown/icon.png)
+```{r echo = FALSE, include=FALSE, warning = FALSE, comment=FALSE, message=FALSE}
+library(curl)
+library(rsconnect)
+library(readxl)
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(plotly)
+library(maps)
+library(mapdata)
+library(mapproj)
+library(leaflet)
+library(sf)
+library(tmap)
+library(transformr)
+library(geojson)
+library(rgdal)
+library(raster) # union function
+library(bookdown)
+data("World")
+
+russia <- readOGR("/Users/wemigliari/Documents/R/data/RUS_adm3.shp")
+
+brazil <- readOGR("/Users/wemigliari/Documents/R/data/BRA_adm1.shp")
+
+test <- union(russia, brazil) ### Put the two or more shapefiles together
+
+```
+
+#### Research Areas & Metadata [This is not an official webpage!]
+
+\
+The following map is a geoprocessing interface. Please, click on the markers to see the respective contents. In the pop-ups you may find also other hyperlinks that will direct you to specific webpages with more data, graphs and fact sheets about a specific project. See 
+
+```{r, echo = FALSE}
+
+xfun::embed_file('/Users/wemigliari/Library/Mobile Documents/com~apple~CloudDocs/Pós-Doutorado & Doutorado/Pós-Doc/Applications/7. July/Potsdam/Documentation/BookletExperiment.pdf', text = 'The Handbook on Metadata for Sustainability Studies: Glossary and Hyperlinks.')
+
+```
+
+\
+
+```{r, echo = FALSE, warning=FALSE, comment=FALSE, message=FALSE, fig.height = 6, fig.width = 9.5, fig.align = "center", include = TRUE}
+
+content <- paste(sep ="<br>",
+                 "<a href='https://rpubs.com/wemigliari/643028'>Metadata on Arctic Governance</a>",
+                 "Russian Federation",
+                 "Nakhodka, Yamalo-Nenets Autonomous Okrug",
+                 "Administrative center: Salekhard", 
+                 "Largest city: Noyabrsk",
+                 "Temperature Variation: −25.3 to 7.5 °C",
+                 "Ethnic Groups: Russians, Nenets, Khants, Komi, Tatars, Ukrainians, Selkups, Others",
+                 "Nakhodka's Population 2,676",
+                 " - Urengoy and Yamburg gas fields are the largest gas fields in Russia, with 16 and 8.2 trillion cubic meters of reserves, respectively.",
+                 "Multinationals Involved: PJSC Lukoil Oil Company")
+
+content2 <- paste(sep = "<br>", "<a href='http://www.inpe.br/', target='_blank'>INPE</a>",
+                 "Federative Republic of Brazil [Metadata Incomplete!]",
+                 "State of Amazonas",
+                 "Administrative center: Manaus", 
+                 "Largest city: Manaus",
+                 "Temperature Variation: 25 to 33 °C",
+                 "Manaus' Population 1.7 million",
+                 " - According to INPE/National Institute for Space Research, from August 2018 to July 2019, 10,129 square kilometers were deforested in Brazil (3,911 square miles).")
+
+
+leaflet()%>% #Add the file test with the shape files russia and brazil
+  #addPolygons(fillColor = "lightblue", color = "gray",
+              #opacity = 1.0, weight = .6, smoothFactor = 0.5,
+              #highlightOptions = highlightOptions(color="white", weight=2, bringToFront = TRUE), label= test$NAME_1)%>%
+  addProviderTiles(providers$CartoDB.Positron)%>%
+  addMarkers(lat=67.718997124, lng=77.656997, label = "Yamalo-Nenets Autonomous Okrug", popup = content)%>%
+  addCircles(lat = 55.754093, lng = 37.620407, color = "lightgreen", label = "Moscow", radius = 300)%>%
+  setView(lat=10, lng=60, zoom = 2)%>%
+  setMapWidgetStyle(list(background= "white"))%>%
+  addMarkers(lat=-3.10194, lng=-60.025, label = "State of Manaus", popup = content2)%>%
+  addCircles(lat=-15.793889, lng=-47.882778, color = "lightgreen", label = "Brasília", radius = 300)%>%
+  addMarkers(lat=52.520008, lng=13.404954, label = "Berlin [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=28, lng=82, label = "Himalaya, Nepal [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=15.870032, lng=100.992541, label = "Thailand [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=23.684994, lng=90.356331, label = "Bangladesh [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=12.879721, lng=121.774017, label = "Philippines [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+   addMarkers(lat=-38.416097, lng=-63.616672, label = "Argentina [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=-16.290154, lng=-63.588653, label = "Bolivia [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+    addMarkers(lat=-1.831239, lng=-78.183406, label = "Ecuador [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=-9.189967, lng=-75.015152, label = "Peru [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+   addMarkers(lat=46.71109, lng= 1.7191036, label = "France [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=41.902782, lng= 12.496366, label = "Italy [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=39.904211, lng=116.407395, label = "China [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=47.751076, lng=-120.740135, label = "United States [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=-1.9437057, lng=29.8805778, label = "Rwanda [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=-0.023559, lng=37.906193, label = "Kenya [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=9.081999, lng=8.675277, label = "Nigeria [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+addMarkers(lat=-26.195246, lng=28.034088, label = "South Africa [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+  addMarkers(lat=12.238333, lng=-1.561593, label = "Burkina Faso [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))%>%
+addMarkers(lat=20.593684, lng=78.96288, label = "India [Metadata Under Construction!]", icon = list(
+    iconUrl =  'https://icons.iconarchive.com/icons/icojam/blueberry-basic/32/flag-mark-green-icon.png',
+    iconSize = c(25, 25)))
+  
+  ### Adding the Brazilian polygons
+  #addPolygons(fillColor = "lightblue", color = "gray",
+                            #opacity = 1.0, weight = .6, smoothFactor = 0.5,
+                            #highlightOptions = highlightOptions(color="white", weight=2, bringToFront = TRUE), label= test$NL_NAME_1)%>%
+  #addTiles()%>%
+  #addProviderTiles(providers$CartoDB.Positron)%>%
+  #addMarkers(lat=-3.10194, lng=-60.025, popup = content2)%>%
+  #addCircles(lat=-15.793889, lng=-47.882778, popup = "Brasília", color = "red", radius = 2)#%>%
+  #setMapWidgetStyle(list(background= "white"))
+
+
+```
+
+\
+The Institute for Advanced Sustainability Studies (IASS) has six areas of research: Forums: Science, Policy and Society; Democratic Transformations; Governance for the Environment and Society; Energy Systems and Societal Changes; Perceptions, Values and Orientation; and Systemic Interdependencies: Nature, Technology and Society. For more details, <a href="https://www.iass-potsdam.de/en/research/" target="_blank">click here</a>.
+\
+\
+\
+Migliari, W. (2020). R Studio.
+\
+\
+
+
