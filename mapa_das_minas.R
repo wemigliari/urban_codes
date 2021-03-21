@@ -27,33 +27,51 @@ mina_cascalheira <- read_sf("/Users/wemigliari/Documents/HTML/polos_data/img/Min
 mina_central_brasil <- read_sf("/Users/wemigliari/Documents/HTML/polos_data/img/Mina Central do Brasil.shp")
 mina_cofins <- read_sf("/Users/wemigliari/Documents/HTML/polos_data/img/Mina Cofins.shp")
 mina_corrego_feijao <- read_sf("/Users/wemigliari/Documents/HTML/polos_data/img/Mina Córrego do Feijão.shp")
-
+mina_corrego_samamb <- read_sf("/Users/wemigliari/Documents/HTML/polos_data/img/Mina Córrego Samambaia.shp")
 
 
 leaflet() %>% 
   addTiles() %>% 
+  addPolygons(data=mina_corrego_samamb, weight = 1,
+              fillColor = "#CBB31B ", 
+              color = "black",
+              fillOpacity = 0.8, 
+              label = "Mina Córrego do Samambaia",
+              group = "Mina Córrego do Samambaia")%>%
+  addPolygons(data=mina_corrego_feijao, weight = 1,
+              fillColor = "#E49812", 
+              color = "black",
+              fillOpacity = 0.8, 
+              label = "Mina Córrego do Feijão",
+              group = "Mina Córrego do Feijão")%>%
   addPolygons(data=mina_abo, weight = 1,
               fillColor = "green", 
-              color = "green",
-              fillOpacity = 0.2, 
+              color = "black",
+              fillOpacity = 0.8, 
               label = "Mina Abóboras",
               group = "Mina Abóboras")%>%
+  addPolygons(data=mina_cofins, weight = 1,
+              fillColor = "#ABB2B7", 
+              color = "black",
+              fillOpacity = 0.8, 
+              label = "Mina Cofins",
+              group = "Mina Cofins")%>%
   addPolygons(data=mina_acaba, weight = 1, 
               fillColor = 'turquoise',
-              color = "turquoise",
+              color = "black",
               label = "Mina Acaba Mundo",
               group = "Mina Acaba Mundo",
               fillOpacity = 0.8)%>%
   addPolygons(data=mina_central_brasil, weight = 1,
-              fillColor = "#97B1C2", 
-              color = "#97B1C2",
-              fillOpacity = 0.2, 
+              fillColor = "#0D98FC", 
+              color = "black",
+              fillOpacity = 0.8, 
               label = "Mina Central do Brasil",
               group = "Mina Central do Brasil")%>%
   addPolygons(data=mina_cascalheira, weight = 1,
               fillColor = "#133B56", 
-              color = "#133B56",
-              fillOpacity = 0.2, 
+              color = "black",
+              fillOpacity = 0.8, 
               label = "Mina Cascalheira",
               group = "Mina Cascalheira")%>%
   addPolygons(data=mineracao, weight = 1,
@@ -61,10 +79,10 @@ leaflet() %>%
               color = "olive",
               fillOpacity = 0.2, 
               label = mineracao$NOME)%>%
-  addPolygons(data=mina_abo, weight = 1, 
+  addPolygons(data=mina_cdm, weight = 1, 
               fillColor = "darkgreen", 
-              color = "darkgreen",
-              fillOpacity = 0.2, 
+              color = "black",
+              fillOpacity = 0.8, 
               label = "Mina Capitão do Mato",
               group = "Mina Capitão do Mato")%>%
   addPolygons(data=mina_ma$geometry, weight = 1, 
@@ -92,24 +110,27 @@ leaflet() %>%
               group = "Mina da Mutuca",
               fillOpacity = 0.8)%>%
   addPolygons(data=mina_casa_pedra, weight = 1, 
-              fillColor = 'blue',
-              color = "blue",
+              fillColor = '#0D7A7E ',
+              color = "black",
               label = "Mina Casa de Pedra",
               group = "Mina Casa de Pedra",
               fillOpacity = 0.8)%>%
   addProviderTiles(providers$Stamen.TonerLite)%>% 
   setView(lat= -19.983333, lng = -43.940933, zoom = 11)%>%
   addLayersControl(
-    overlayGroups = c("Mina Cascalheira",
-                      "Mina Central do Brasil",
-                      "Mina Abóboras", 
-                      "Mina Capitão do Mato", 
+    overlayGroups = c("Mina Abóboras",
                       "Mina Acaba Mundo",
-                      "Mina Mar Azul", 
+                      "Mina Capitão do Mato", 
+                      "Mina de Capão",
+                      "Mina Cascalheira",
+                      "Mina Casa de Pedra",
+                      "Mina Central do Brasil",
+                      "Mina Cofins",
+                      "Mina Córrego do Feijão",
+                      "Mina Córrego Samambaia",
                       "Mina do Chapéu", 
                       "Mina da Mutuca", 
-                      "Mina de Capão",
-                      "Mina Casa de Pedra"),
+                      "Mina Mar Azul"),
     options = layersControlOptions(collapsed = FALSE)
   )
 
